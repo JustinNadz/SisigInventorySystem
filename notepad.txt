@@ -1,1 +1,326 @@
-Busineess for client
+🍽️ SISIG POS + INVENTORY SYSTEM (DJANGO + REACT FULL DETAILS)
+📌 Why this stack is perfect
+✔ Django (Backend)
+
+Very secure (built-in protection)
+
+Comes with Admin panel (super useful for inventory & menu)
+
+Strong database handling
+
+Great for business logic (POS + Inventory)
+
+Built-in user management
+
+✔ React (Frontend)
+
+Fast
+
+Touchscreen-friendly
+
+Beautiful POS UI
+
+Perfect for cashier workflow
+
+🛠️ 1. SYSTEM FEATURES (You chose 2 roles only)
+ADMIN
+
+Manage menu items
+
+Manage ingredients
+
+Set prices
+
+Manage inventory stocks
+
+See sales reports
+
+Manage cashier accounts
+
+CASHIER
+
+Takes orders
+
+Adds items to cart
+
+Accepts payment (cash/card)
+
+Prints receipt
+
+View today's sales
+
+Sends order to kitchen
+
+🛠️ 2. PROJECT STRUCTURE (FULL)
+🔹 Backend (Django)
+backend/
+│── pos_project/
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+│── pos_app/
+│   ├── models.py
+│   ├── views.py
+│   ├── urls.py
+│   ├── serializers.py
+│   ├── permissions.py
+│   └── admin.py
+│── env/
+│── manage.py
+
+🔹 Frontend (React)
+frontend/
+│── src/
+│   ├── pages/
+│   │   ├── LoginPage.jsx
+│   │   ├── POSPage.jsx
+│   │   ├── InventoryPage.jsx
+│   │   ├── MenuPage.jsx
+│   ├── components/
+│   │   ├── Cart.jsx
+│   │   ├── MenuItemCard.jsx
+│   │   ├── InventoryRow.jsx
+│   ├── App.js
+│   └── index.js
+
+🛠️ 3. DJANGO BACKEND (FULL DETAILS)
+✔ Install Django + DRF
+mkdir sisig-pos
+cd sisig-pos
+python -m venv env
+source env/bin/activate
+pip install django djangorestframework django-cors-headers
+django-admin startproject pos_project
+cd pos_project
+django-admin startapp pos_app
+
+📌 MODELS (Django) FULL DESIGN
+1. Inventory Model
+class Inventory(models.Model):
+    name = models.CharField(max_length=100)
+    quantity = models.FloatField()
+    unit = models.CharField(max_length=20)
+    threshold = models.FloatField()
+
+    def __str__(self):
+        return self.name
+
+2. Menu Item Model
+class MenuItem(models.Model):
+    name = models.CharField(max_length=100)
+    price = models.FloatField()
+    ingredients = models.ManyToManyField(Inventory, through="MenuIngredient")
+
+    def __str__(self):
+        return self.name
+
+3. Menu Ingredient Model
+class MenuIngredient(models.Model):
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    ingredient = models.ForeignKey(Inventory, on_delete=models.CASCADE)
+    qty_needed = models.FloatField()
+
+
+Example:
+1 Pork Sisig Plate → subtract 150g pork, 20g onions, 10g chili
+
+4. Order Model
+class Order(models.Model):
+    items = models.ManyToManyField(MenuItem, through="OrderItem")
+    total = models.FloatField()
+    payment_method = models.CharField(max_length=10)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+5. Order Item Model
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+📌 4. DJANGO ADMIN PANEL (Auto Generated)
+
+Django gives you:
+
+Inventory management screen
+
+Menu management screen
+
+Ingredient assignment
+
+Order history
+
+Just add in admin.py:
+
+from django.contrib import admin
+from .models import Inventory, MenuItem, MenuIngredient, Order, OrderItem
+
+admin.site.register(Inventory)
+admin.site.register(MenuItem)
+admin.site.register(MenuIngredient)
+admin.site.register(Order)
+admin.site.register(OrderItem)
+
+📌 5. API ROUTES (Django REST Framework)
+✔ /api/menu/
+
+Get menu items (for cashier POS)
+
+✔ /api/orders/create
+
+Create new order
+
+✔ /api/inventory/update
+
+Subtract ingredients automatically after each sale
+
+✔ /api/reports/today
+
+Daily sales report for admin
+
+📌 6. REACT FRONTEND (FULL DETAILS)
+Install React
+npx create-react-app frontend
+cd frontend
+npm install axios react-router-dom
+
+📌 REACT PAGES YOU NEED
+✔ LoginPage.jsx
+
+Admin & cashier login
+
+JWT token received → save to localStorage
+
+✔ POSPage.jsx (Cashier Main Screen)
+
+Contains:
+
+Menu item grid
+
+Add to cart
+
+Cart panel
+
+Payment modal
+
+Checkout button
+
+Handles:
+
+Create order → API call
+
+Print receipt
+
+Update inventory (backend handles this automatically)
+
+✔ MenuPage.jsx (Admin)
+
+CRUD for:
+
+Add menu item
+
+Add ingredients per item
+
+Delete menu items
+
+✔ InventoryPage.jsx (Admin)
+
+Add stock
+
+Edit stock
+
+View low stock items (yellow highlight)
+
+✔ ReportsPage.jsx (Admin)
+
+Total sales
+
+Best-selling items
+
+Total orders
+
+Daily income chart
+
+📌 7. SYSTEM WORKFLOW (VERY IMPORTANT)
+1. Admin loads menu + ingredients in Django admin panel
+
+Examples:
+
+Pork Sisig = 150g pork, 20g onion, 10g chili
+
+Spicy Sisig = 150g pork, 20g onion, 15g chili
+
+2. Cashier uses POS (React)
+
+Cashier selects item → adds to cart → Checkout
+
+3. Django Backend subtracts inventory automatically
+
+For each item ordered:
+
+Loop ingredients
+
+Subtract qty_needed * quantity_sold
+
+4. Order saved in database
+5. Reports generated automatically
+📌 8. DEPLOYMENT OPTIONS
+Best hosting for Django:
+
+Railway.app (free tier)
+
+Render.com
+
+DigitalOcean
+
+AWS Lightsail
+
+Best hosting for React:
+
+Vercel
+
+Netlify
+
+AWS S3
+
+📌 9. RECOMMENDED HARDWARE (SMALL RESTAURANT)
+
+1 Laptop/tablet (Cashier)
+
+1 Thermal printer
+
+1 Kitchen tablet (optional)
+
+WiFi Router
+
+Barcode scanner (optional)
+
+📌 10. WHAT I CAN GIVE YOU NEXT
+
+Just tell me what you want:
+
+✔ A. Complete Django backend code
+
+(Models, serializers, views, URLs, JWT authentication)
+
+✔ B. Complete React frontend code
+
+(POS UI, cart system, API calls, admin pages)
+
+✔ C. System diagrams
+
+(Database ERD, Architecture map)
+
+✔ D. Folder structures & installation guide
+✔ E. UI design mockups for cashier + admin
+✔ F. Deployment guide
+👉 What do you want next?
+
+Pick one:
+
+1️⃣ Backend full code (Django)
+2️⃣ Frontend full code (React POS UI)
+3️⃣ Both backend + frontend full source code
+4️⃣ Database ERD (diagram)
+5️⃣ UI designs
+
+Tell me the number(s).
